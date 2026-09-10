@@ -17,6 +17,10 @@ To host it for free, push this repo to GitHub and turn on **Settings → Pages �
 branch → `main` / root**. Your game will be live at
 `https://<your-username>.github.io/<repo-name>/`, ready for a QR code on a poster.
 
+> GitHub Pages needs the repository to be **public** on a free account. If you keep it
+> private, host `index.html` on an internal web server or SharePoint instead — it is a
+> single self-contained file, so anywhere that serves static HTML will work.
+
 ## Configure it for your organisation
 
 Everything you need to change is in one block near the top of the `<script>` in `index.html`:
