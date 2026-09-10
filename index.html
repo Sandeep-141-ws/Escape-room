@@ -726,9 +726,9 @@ const CREDIT = {
 };
 
 const LABEL = {
-  safe:   { name:"Go ahead",  sub:"This is genuine" },
-  verify: { name:"Verify it", sub:"Check another way first" },
-  attack: { name:"Report it", sub:"This is an attack" }
+  safe:   { name:"Safe",        sub:"Go ahead" },
+  verify: { name:"Check first", sub:"Not sure \u2014 verify it" },
+  attack: { name:"Attack",      sub:"Report it" }
 };
 
 const stage = document.getElementById("stage");
@@ -773,19 +773,19 @@ function renderStart(){
   stage.innerHTML = `
     <p class="eyebrow">${esc(CONFIG.orgName)} &#183; ${esc(CONFIG.eventName)}</p>
     <h1>Fix or <em>Phish?</em></h1>
-    <p class="lede">Attackers have stopped trying to sneak malware past your laptop. It is easier to put a helpful-looking message on your screen and let <b>you</b> run it for them.</p>
-    <p class="lede">That is called <b>ClickFix</b>. It is now one of the most common ways organisations get breached &#8212; and it works on everybody, because it does not look like an attack. It looks like a fix.</p>
+    <p class="lede">Attackers don&#8217;t sneak malware onto your laptop any more. They put a helpful-looking message on your screen and let <b>you</b> run it for them.</p>
+    <p class="lede"><b>${CONFIG.roundsPerGame} screens. ${CONFIG.secondsPerRound} seconds each.<br>Is it safe, or is it an attack?</b></p>
     ${needName ? `
       <div class="field">
-        <label for="p-name">Your name <span style="font-weight:400">(for the leaderboard)</span></label>
+        <label for="p-name">Your name</label>
         <input type="text" id="p-name" autocomplete="name" placeholder="e.g. Alex Taylor" maxlength="40">
       </div>
       <p class="err" id="reg-err" hidden></p>` : ""}
     <div class="foot">
-      <button class="big" id="go">${needName ? "Continue" : "Start the challenge"}</button>
-      ${CONFIG.showLeaderboard ? `<button class="big alt" id="see-board">See the leaderboard</button>` : ""}
+      <button class="big" id="go">Start</button>
+      ${CONFIG.showLeaderboard ? `<button class="big alt" id="see-board">Scores</button>` : ""}
     </div>
-    <p class="tiny" style="margin-top:22px">Nothing here is real and nothing here can run. Every command shown is deliberately broken.</p>`;
+    <p class="tiny" style="margin-top:20px">Not sure about one? Pick <b>Check first</b> &#8212; being careful still scores points.<br>Nothing here is real, and nothing here can run.</p>`;
 
   const go = () => {
     if (needName){
@@ -794,7 +794,7 @@ function renderStart(){
       if (v.length < 2){ err.textContent = "Enter your name to continue."; err.hidden = false; return; }
       player = v;
     }
-    renderBrief();
+    startGame();
   };
   document.getElementById("go").onclick = go;
   document.getElementById("see-board")?.addEventListener("click", () => renderBoard(true));
@@ -803,29 +803,13 @@ function renderStart(){
   else document.getElementById("go").focus();
 }
 
-function renderBrief(){
+function startGame(){
   clearTimer();
-  const hi = player ? player.split(" ")[0] : "";
-  stage.innerHTML = `
-    <p class="eyebrow">How it works</p>
-    <h2>${hi ? esc(hi) + ", here" : "Here"}&#8217;s the deal</h2>
-    <ol class="howto" style="list-style:none;padding:0">
-      <li><span class="num">1</span><div>You&#8217;ll see <b>${CONFIG.roundsPerGame} screens</b> &#8212; the kind that genuinely land in front of people at work. Some are attacks. Some are completely normal IT.</div></li>
-      <li><span class="num">2</span><div>You get <b>${CONFIG.secondsPerRound} seconds</b> each. Deciding under pressure is the whole point &#8212; that is when these attacks work.</div></li>
-      <li><span class="num">3</span><div>Three choices: <b>Go ahead</b>, <b>Verify it</b>, or <b>Report it</b>. Some screens are not clearly good or bad &#8212; for those, checking is the right answer, and you get part marks for being cautious.</div></li>
-      <li><span class="num">4</span><div>Answer fast and keep a streak for bonus points. After each screen we show you exactly what gave it away.</div></li>
-    </ol>
-    <div class="rule">One rule beats all of them: if a &#8220;fix&#8221; asks you to paste something into Run, PowerShell, Terminal or the File Explorer address bar &#8212; it is not a fix.</div>
-    <p class="tiny">Most people do not get full marks. That is deliberate.</p>
-    <div class="foot"><button class="big" id="start">Start the challenge</button></div>`;
-  document.getElementById("start").onclick = () => {
-    rounds = buildRounds();
-    idx = 0; score = 0; correct = 0; streak = 0; pwned = 0;
-    maxScore = rounds.reduce((sum, _, i) =>
-      sum + BASE_POINTS + SPEED_BONUS + Math.min(STREAK_CAP, STREAK_BONUS * i), 0);
-    renderRound();
-  };
-  document.getElementById("start").focus();
+  rounds = buildRounds();
+  idx = 0; score = 0; correct = 0; streak = 0; pwned = 0;
+  maxScore = rounds.reduce((sum, _, i) =>
+    sum + BASE_POINTS + SPEED_BONUS + Math.min(STREAK_CAP, STREAK_BONUS * i), 0);
+  renderRound();
 }
 
 function renderRound(){
@@ -967,19 +951,17 @@ function renderResult(){
     </div>
     <ul class="takeaways">
       <li><span class="num">1</span><div><b>If a fix asks you to paste, it is not a fix.</b> Run, PowerShell, Terminal, the File Explorer address bar &#8212; nothing legitimate ever needs them.</div></li>
-      <li><span class="num">2</span><div><b>A web page cannot fix your computer.</b> It cannot see your drivers, your browser version or your microphone.</div></li>
-      <li><span class="num">3</span><div><b>Check on a different channel.</b> Phone call, walk over, or open the app yourself &#8212; never reply through the thing that contacted you.</div></li>
-      <li><span class="num">4</span><div><b>Already pasted something?</b> You are not in trouble. Disconnect from the network and contact ${esc(CONFIG.reportTo)} immediately &#8212; minutes matter.</div></li>
-      <li><span class="num">5</span><div><b>Report it</b> via ${esc(CONFIG.reportHow)}. One report protects everyone else who got the same message.</div></li>
+      <li><span class="num">2</span><div><b>Not sure? Check another way.</b> Phone them, walk over, or open the app yourself. Never reply through the thing that contacted you.</div></li>
+      <li><span class="num">3</span><div><b>Already pasted something?</b> You are not in trouble. Tell ${esc(CONFIG.reportTo)} straight away &#8212; minutes matter. Report anything suspicious via ${esc(CONFIG.reportHow)}.</div></li>
     </ul>
     <div class="foot">
-      ${CONFIG.showLeaderboard ? `<button class="big" id="board">Leaderboard</button>` : ""}
+      ${CONFIG.showLeaderboard ? `<button class="big" id="board">Scores</button>` : ""}
       <button class="big ${CONFIG.showLeaderboard ? "alt" : ""}" id="again">Play again</button>
       <button class="big alt" id="newp">Next player</button>
     </div>`;
 
   document.getElementById("board")?.addEventListener("click", () => renderBoard(false));
-  document.getElementById("again").onclick = () => renderBrief();
+  document.getElementById("again").onclick = () => startGame();
   document.getElementById("newp").onclick = () => { player = null; renderStart(); };
   (document.getElementById("board") || document.getElementById("again")).focus();
 }
@@ -997,6 +979,22 @@ function saveScore(e){
   } catch { /* private browsing - leaderboard just won't persist */ }
 }
 
+/* Excel opens this directly. The BOM makes it read the file as UTF-8. */
+function downloadCsv(){
+  const all = loadScores().sort((a, b) => b.score - a.score || a.pwned - b.pwned);
+  if (!all.length) return;
+  const cell = v => `"${String(v).replace(/"/g, '""')}"`;
+  const rows = [["Rank", "Name", "Score", "Fully correct", "Out of", "Would have run it", "Played at"]]
+    .concat(all.map((e, i) => [i + 1, e.name, e.score, e.correct, e.total, e.pwned, new Date(e.at).toLocaleString()]));
+  const csv = "\uFEFF" + rows.map(r => r.map(cell).join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `fix-or-phish-scores-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function renderBoard(fromNav){
   clearTimer();
   const all = loadScores().sort((a, b) => b.score - a.score || a.pwned - b.pwned);
@@ -1009,6 +1007,7 @@ function renderBoard(fromNav){
     <h2>Leaderboard</h2>
     <p class="tiny">Stored in this browser only &#8212; nothing is sent anywhere.</p>
     ${played ? `
+      <div class="grade">Winner: ${esc(all[0].name)} &#183; ${all[0].score} pts</div>
       <div class="statrow">
         <div class="stat"><b>${played}</b><span>Games played</span></div>
         <div class="stat danger"><b>${gotHit}</b><span>Would have run it</span></div>
@@ -1026,10 +1025,12 @@ function renderBoard(fromNav){
     : `<p class="empty">No scores yet. Be the first.</p>`}
     <div class="foot">
       <button class="big" id="back">${fromNav ? "Play" : "Next player"}</button>
-      ${played ? `<button class="big alt" id="clear">Clear leaderboard</button>` : ""}
+      ${played ? `<button class="big alt" id="csv">Download for Excel</button>` : ""}
+      ${played ? `<button class="big alt" id="clear">Clear scores</button>` : ""}
     </div>`;
 
   document.getElementById("back").onclick = () => { player = null; renderStart(); };
+  document.getElementById("csv")?.addEventListener("click", downloadCsv);
   document.getElementById("clear")?.addEventListener("click", () => {
     if (confirm("Clear all scores from this browser? This cannot be undone.")){
       localStorage.removeItem(LB_KEY); lastEntry = null; renderBoard(fromNav);
