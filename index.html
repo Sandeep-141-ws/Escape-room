@@ -241,7 +241,7 @@
   <div class="logo">F?</div>
   <div class="brand">Fix or Phish?<small id="brand-sub">Security Awareness Challenge</small></div>
   <div class="spacer"></div>
-  <button class="linkbtn" id="nav-board">Leaderboard</button>
+  <button class="linkbtn" id="nav-board" hidden>Host view</button>
 </div>
 
 <div class="stage" id="stage" aria-live="polite"></div>
@@ -262,7 +262,9 @@ const CONFIG = {
   secondsPerRound: 20,                       // time limit per screen
   roundsPerGame:   10,                       // how many screens per player
   askForName:      true,                     // false = anonymous / no sign-in
-  showLeaderboard: true,                     // stored in this browser only
+  recordScores:    true,                     // keep a local record of every game
+  // Players never see anyone's score but their own. To open the host view and
+  // export to Excel, add #host to the URL or press Ctrl+Shift+H.
   // Optional: paste a Power Automate / Logic App "When an HTTP request is
   // received" URL to log results centrally. Leave blank to keep it fully local.
   resultsEndpoint: ""
@@ -738,8 +740,13 @@ let rounds = [], idx = 0, score = 0, maxScore = 0, correct = 0, streak = 0,
     pwned = 0, answered = false, timer = null, tStart = 0, player = null, lastEntry = null;
 
 document.getElementById("brand-sub").textContent = CONFIG.orgName + " \u00b7 " + CONFIG.eventName;
-document.getElementById("nav-board").hidden = !CONFIG.showLeaderboard;
-document.getElementById("nav-board").onclick = () => renderBoard(true);
+
+/* Scores are host-only. Unlock with #host in the URL or Ctrl+Shift+H. */
+let hostUnlocked = location.hash.toLowerCase() === "#host";
+const navBoard = document.getElementById("nav-board");
+navBoard.onclick = () => renderBoard(true);
+function refreshHostNav(){ navBoard.hidden = !hostUnlocked; }
+refreshHostNav();
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const tokens = s => String(s)
@@ -783,7 +790,7 @@ function renderStart(){
       <p class="err" id="reg-err" hidden></p>` : ""}
     <div class="foot">
       <button class="big" id="go">Start</button>
-      ${CONFIG.showLeaderboard ? `<button class="big alt" id="see-board">Scores</button>` : ""}
+      ${hostUnlocked ? `<button class="big alt" id="see-board">Host view</button>` : ""}
     </div>
     <p class="tiny" style="margin-top:20px">Not sure about one? Pick <b>Check first</b> &#8212; being careful still scores points.<br>Nothing here is real, and nothing here can run.</p>`;
 
@@ -955,15 +962,15 @@ function renderResult(){
       <li><span class="num">3</span><div><b>Already pasted something?</b> You are not in trouble. Tell ${esc(CONFIG.reportTo)} straight away &#8212; minutes matter. Report anything suspicious via ${esc(CONFIG.reportHow)}.</div></li>
     </ul>
     <div class="foot">
-      ${CONFIG.showLeaderboard ? `<button class="big" id="board">Scores</button>` : ""}
-      <button class="big ${CONFIG.showLeaderboard ? "alt" : ""}" id="again">Play again</button>
+      <button class="big" id="again">Play again</button>
       <button class="big alt" id="newp">Next player</button>
+      ${hostUnlocked ? `<button class="big alt" id="board">Host view</button>` : ""}
     </div>`;
 
   document.getElementById("board")?.addEventListener("click", () => renderBoard(false));
   document.getElementById("again").onclick = () => startGame();
   document.getElementById("newp").onclick = () => { player = null; renderStart(); };
-  (document.getElementById("board") || document.getElementById("again")).focus();
+  document.getElementById("again").focus();
 }
 
 /* ---------------------------- leaderboard --------------------------------- */
@@ -971,7 +978,7 @@ function loadScores(){
   try { return JSON.parse(localStorage.getItem(LB_KEY)) || []; } catch { return []; }
 }
 function saveScore(e){
-  if (!CONFIG.showLeaderboard) return;
+  if (!CONFIG.recordScores) return;
   try {
     const all = loadScores();
     all.push(e);
@@ -1004,8 +1011,8 @@ function renderBoard(fromNav){
 
   stage.innerHTML = `
     <p class="eyebrow">${esc(CONFIG.orgName)} &#183; ${esc(CONFIG.eventName)}</p>
-    <h2>Leaderboard</h2>
-    <p class="tiny">Stored in this browser only &#8212; nothing is sent anywhere.</p>
+    <h2>Host view &#8212; scores</h2>
+    <p class="tiny">Players never see this screen. Saved in this browser only, and nothing is sent anywhere &#8212; export before you clear.</p>
     ${played ? `
       <div class="grade">Winner: ${esc(all[0].name)} &#183; ${all[0].score} pts</div>
       <div class="statrow">
@@ -1052,6 +1059,13 @@ function postResult(data){
 
 /* Keyboard shortcuts so a booth host can drive it without a mouse. */
 document.addEventListener("keydown", e => {
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "h"){
+    e.preventDefault();
+    hostUnlocked = true;
+    refreshHostNav();
+    renderBoard(true);
+    return;
+  }
   if (e.target.tagName === "INPUT") return;
   const map = { "1":"safe", "2":"verify", "3":"attack" };
   if (map[e.key]) stage.querySelector(`.ans[data-k="${map[e.key]}"]`)?.click();
