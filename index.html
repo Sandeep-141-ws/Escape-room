@@ -265,6 +265,13 @@ const CONFIG = {
   recordScores:    true,                     // keep a local record of every game
   // Players never see anyone's score but their own. To open the host view and
   // export to Excel, add #host to the URL or press Ctrl+Shift+H.
+
+  // Microsoft Forms collector (optional) — use this when players are on their
+  // own devices. Paste the pre-filled URL copied from Forms, then put each
+  // question's r-code below. Leave formUrl blank to hide the button entirely.
+  formUrl:    "",
+  formFields: { name: "", score: "", correct: "", ranIt: "" },
+
   // Optional: paste a Power Automate / Logic App "When an HTTP request is
   // received" URL to log results centrally. Leave blank to keep it fully local.
   resultsEndpoint: ""
@@ -962,15 +969,19 @@ function renderResult(){
       <li><span class="num">3</span><div><b>Already pasted something?</b> You are not in trouble. Tell ${esc(CONFIG.reportTo)} straight away &#8212; minutes matter. Report anything suspicious via ${esc(CONFIG.reportHow)}.</div></li>
     </ul>
     <div class="foot">
-      <button class="big" id="again">Play again</button>
+      ${CONFIG.formUrl ? `<button class="big" id="submit">Submit my score</button>` : ""}
+      <button class="big ${CONFIG.formUrl ? "alt" : ""}" id="again">Play again</button>
       <button class="big alt" id="newp">Next player</button>
       ${hostUnlocked ? `<button class="big alt" id="board">Host view</button>` : ""}
     </div>`;
 
+  document.getElementById("submit")?.addEventListener("click", () => {
+    window.open(formLink(entry), "_blank", "noopener");
+  });
   document.getElementById("board")?.addEventListener("click", () => renderBoard(false));
   document.getElementById("again").onclick = () => startGame();
   document.getElementById("newp").onclick = () => { player = null; renderStart(); };
-  document.getElementById("again").focus();
+  (document.getElementById("submit") || document.getElementById("again")).focus();
 }
 
 /* ---------------------------- leaderboard --------------------------------- */
@@ -1045,8 +1056,20 @@ function renderBoard(fromNav){
   });
 }
 
-/* Fire-and-forget POST. Never blocks the player, never surfaces errors. */
-function postResult(data){
+/* Overwrites the dummy values in the Forms pre-filled URL with this player's result. */
+function formLink(e){
+  try {
+    const u = new URL(CONFIG.formUrl);
+    const f = CONFIG.formFields || {};
+    if (f.name)    u.searchParams.set(f.name, e.name);
+    if (f.score)   u.searchParams.set(f.score, e.score);
+    if (f.correct) u.searchParams.set(f.correct, `${e.correct}/${e.total}`);
+    if (f.ranIt)   u.searchParams.set(f.ranIt, e.pwned);
+    return u.toString();
+  } catch { return CONFIG.formUrl; }
+}
+
+/* Fire-and-forget POST. Never blocks the player, never surfaces errors. */function postResult(data){
   if (!CONFIG.resultsEndpoint) return;
   try {
     fetch(CONFIG.resultsEndpoint, {
