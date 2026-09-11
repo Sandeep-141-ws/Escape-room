@@ -174,6 +174,7 @@
             th("correct", "Correct", " n") +
             th("accuracy", "Accuracy", " n") +
             th("time", "Time", " n") +
+            "<th>Started</th>" +
             th("date", "Completed") +
           "</tr></thead><tbody>" +
           (list.length ? list.map(function (r) {
@@ -185,9 +186,10 @@
               '<td class="n">' + r.correct + "/" + r.total + "</td>" +
               '<td class="n">' + r.accuracy + "%</td>" +
               '<td class="n">' + ENGINE.formatDuration(r.durationMs) + "</td>" +
+              "<td>" + new Date(r.startedAt).toLocaleString() + "</td>" +
               "<td>" + new Date(r.completedAt).toLocaleString() + "</td>" +
             "</tr>";
-          }).join("") : '<tr><td colspan="8">No players match that search.</td></tr>') +
+          }).join("") : '<tr><td colspan="9">No players match that search.</td></tr>') +
           "</tbody></table></div>"
       ) : '<p class="empty">No results yet.' +
           (STORE.central ? "" : " Scores are stored on this device only \u2014 see the README to store them centrally.") +
