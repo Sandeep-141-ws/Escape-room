@@ -1,0 +1,64 @@
+/* ============================================================================
+   Verify Me — configuration
+   Edit this file before your event. Nothing here is a secret: everything in
+   this file is public once the site is deployed. See README.md.
+   ========================================================================== */
+window.VM_CONFIG = {
+  /* ------------------------------------------------------------- branding */
+  gameName:     "Verify Me",
+  tagline:      "Confirming it's really you",
+  orgName:      "Woodside",
+  eventName:    "Cyber Awareness Month",
+  serviceDesk:  "the Digital Service Desk",
+  reportHow:    "the Report Phishing button in Outlook",
+
+  /* ----------------------------------------------------------- game rules */
+  questionsPerGame: 10,
+  secondsPerQuestion: 25,
+
+  /* Questions drawn per category each game. Must total questionsPerGame. */
+  mix: { identity: 3, mfa: 3, phishing: 2, cyber: 2 },
+
+  /* --------------------------------------------------------------- points */
+  points: {
+    base: 100,        // a correct answer
+    speedBonus: 50,   // maximum, scaled by time remaining
+    streakBonus: 25,  // per consecutive correct answer after the first
+    streakCap: 75     // ceiling on the streak bonus, so accuracy still rules
+  },
+
+  /* -------------------------------------------------------------- players */
+  collectWopid: true,       // false removes the field entirely
+  wopidRequired: false,     // optional by default (see README > Privacy)
+
+  privacyNotice:
+    "Your name and game score will be recorded for prize administration " +
+    "during Cyber Awareness Month, then deleted. Nothing else is collected.",
+
+  /* -------------------------------------------------------------- storage */
+  /* "local"    — scores stay in this browser only. No external service.
+     "supabase" — central scores; fill in supabase{} below.
+     "webhook"  — POST each result to a Power Automate / Logic App URL.     */
+  storage: "local",
+
+  supabase: {
+    url: "",        // https://xxxxxxxx.supabase.co
+    anonKey: "",    // publishable anon key — public by design, guarded by RLS
+    table: "results"
+  },
+
+  webhook: {
+    url: ""         // "When an HTTP request is received" trigger URL
+  },
+
+  /* ----------------------------------------------------------------- host */
+  /* How the host dashboard is unlocked. See README > Host access.
+     "supabase" — sign in with a Supabase account (the only real auth here).
+     "passcode" — a shared passcode. Deters players; does NOT stop anyone who
+                  reads the source. Only acceptable in "local" storage mode,
+                  where there is nothing to protect but this browser.        */
+  hostAuth: "passcode",
+
+  /* Only used when hostAuth is "passcode". Never put anything sensitive here. */
+  hostPasscode: "verifyme2026"
+};
