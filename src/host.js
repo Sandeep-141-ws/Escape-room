@@ -21,6 +21,15 @@
     });
   }
 
+  /* Escape-room runs carry lives and an escaped flag; quiz results don't. */
+  function livesCell(r) {
+    return r.lives == null ? "\u2014" : r.lives + "/" + (r.maxLives || 3);
+  }
+  function outcomeCell(r) {
+    if (r.escaped == null) return "\u2014";
+    return r.escaped ? "Escaped" : (r.lives <= 0 ? "Compromised" : "Out of time");
+  }
+
   function header() {
     return '<p class="eyebrow">' + esc(CFG.orgName) + " &#183; " + esc(CFG.eventName) + "</p>";
   }
@@ -151,7 +160,7 @@
         '<div class="podium">' +
           top.map(function (r, i) {
             return '<div class="pod ' + (i === 0 ? "p1" : "") + '">' +
-              '<div class="pos">' + ["1st", "2nd", "3rd"][i] + "</div>" +
+              '<div class="pos">' + ["\uD83E\uDD47 1st", "\uD83E\uDD48 2nd", "\uD83E\uDD49 3rd"][i] + "</div>" +
               '<div class="who">' + esc(r.name) + "</div>" +
               '<div class="sc">' + r.score + "</div>" +
               '<div class="det">' + r.accuracy + "% &#183; " + ENGINE.formatDuration(r.durationMs) + "</div>" +
@@ -173,6 +182,8 @@
             th("score", "Score", " n") +
             th("correct", "Correct", " n") +
             th("accuracy", "Accuracy", " n") +
+            "<th>Lives</th>" +
+            "<th>Outcome</th>" +
             th("time", "Time", " n") +
             "<th>Started</th>" +
             th("date", "Completed") +
@@ -185,11 +196,13 @@
               '<td class="n">' + r.score + "</td>" +
               '<td class="n">' + r.correct + "/" + r.total + "</td>" +
               '<td class="n">' + r.accuracy + "%</td>" +
+              '<td class="n">' + livesCell(r) + "</td>" +
+              "<td>" + outcomeCell(r) + "</td>" +
               '<td class="n">' + ENGINE.formatDuration(r.durationMs) + "</td>" +
               "<td>" + new Date(r.startedAt).toLocaleString() + "</td>" +
               "<td>" + new Date(r.completedAt).toLocaleString() + "</td>" +
             "</tr>";
-          }).join("") : '<tr><td colspan="9">No players match that search.</td></tr>') +
+          }).join("") : '<tr><td colspan="11">No players match that search.</td></tr>') +
           "</tbody></table></div>"
       ) : '<p class="empty">No results yet.' +
           (STORE.central ? "" : " Scores are stored on this device only \u2014 see the README to store them centrally.") +
@@ -241,18 +254,20 @@
   /* ----------------------------------------------------------------- export */
   function exportXlsx() {
     var data = [[
-      "Rank", "Player Name", "WOPID", "Score", "Correct Answers", "Incorrect Answers",
-      "Accuracy %", "Completion Time", "Average Response Time (s)", "Started At", "Completed At"
+      "Rank", "Player Name", "WOPID", "Score", "Correct Decisions", "Incorrect Decisions",
+      "Accuracy %", "Lives Remaining", "Outcome", "Completion Time",
+      "Average Response Time (s)", "Started At", "Completed At"
     ]].concat(rows.map(function (r) {
       return [
         r.rank, r.name, r.wopid || "", r.score, r.correct, r.incorrect, r.accuracy,
+        r.lives == null ? "" : r.lives, outcomeCell(r),
         ENGINE.formatDuration(r.durationMs), Number((r.avgResponseMs / 1000).toFixed(1)),
         new Date(r.startedAt).toLocaleString(), new Date(r.completedAt).toLocaleString()
       ];
     }));
 
     var date = new Date().toISOString().slice(0, 10);
-    XLSX.download("Cyber-Awareness-Game-Results-" + date + ".xlsx", "Results", data);
+    XLSX.download("Cyber-Awareness-Identity-Lockdown-Results-" + date + ".xlsx", "Results", data);
   }
 
   /* ------------------------------------------------------------------- exit */

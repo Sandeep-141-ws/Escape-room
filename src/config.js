@@ -19,6 +19,21 @@ window.VM_CONFIG = {
   /* Questions drawn per category each game. Must total questionsPerGame. */
   mix: { identity: 3, mfa: 3, phishing: 2, cyber: 2 },
 
+  /* ------------------------------------------- escape room (index.html) */
+  escape: {
+    name:     "Identity Lockdown",
+    subtitle: "Can you secure your identity before the attacker gets in?",
+    totalSeconds: 240,       // overall countdown across all five rooms
+    lives: 3,
+    points: {
+      base: 100,             // a correct decision
+      speed: 25,             // maximum, scaled against speedTarget
+      speedTargetSeconds: 35,
+      perfectRoom: 25,       // right first time, nothing wrong selected
+      noHint: 10             // cleared the room without opening the hint
+    }
+  },
+
   /* --------------------------------------------------------------- points */
   points: {
     base: 100,        // a correct answer

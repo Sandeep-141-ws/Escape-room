@@ -122,6 +122,8 @@
             incorrect: result.incorrect,
             total: result.total,
             accuracy: result.accuracy,
+            lives: result.lives == null ? null : result.lives,
+            escaped: result.escaped == null ? null : result.escaped,
             duration_ms: result.durationMs,
             avg_response_ms: result.avgResponseMs,
             started_at: result.startedAt,
@@ -165,6 +167,7 @@
                 gameId: row.game_id, name: row.name, wopid: row.wopid || "",
                 score: row.score, correct: row.correct, incorrect: row.incorrect,
                 total: row.total, accuracy: row.accuracy,
+                lives: row.lives, maxLives: row.max_lives, escaped: row.escaped,
                 durationMs: row.duration_ms, avgResponseMs: row.avg_response_ms,
                 startedAt: row.started_at, completedAt: row.completed_at
               };

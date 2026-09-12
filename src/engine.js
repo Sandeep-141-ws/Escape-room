@@ -6,7 +6,7 @@
   "use strict";
 
   var CFG = global.VM_CONFIG;
-  var BANK = global.VM_QUESTIONS;
+  var BANK = global.VM_QUESTIONS || [];   // absent when only the escape room is loaded
 
   function shuffle(list) {
     var a = list.slice();

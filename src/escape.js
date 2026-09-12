@@ -1,0 +1,151 @@
+/* ============================================================================
+   IDENTITY LOCKDOWN — engine
+   Room selection, the overall countdown, lives and scoring. No DOM here.
+   ========================================================================== */
+(function (global) {
+  "use strict";
+
+  var CFG = global.VM_CONFIG.escape;
+  var ROOMS = global.IL_ROOMS;
+  var ENGINE = global.VM_ENGINE;      // shared shuffle / uuid / formatDuration
+
+  function Run(player) {
+    this.id = ENGINE.uuid();
+    this.player = player;             // { name, wopid }
+
+    // One random scenario per room, so people in the queue can't share answers.
+    this.rooms = ROOMS.map(function (room) {
+      return {
+        def: room,
+        scenario: ENGINE.shuffle(room.scenarios)[0]
+      };
+    });
+
+    this.index = 0;
+    this.lives = CFG.lives;
+    this.fragments = 0;
+    this.results = [];                // one entry per room, in order
+    this.startedAt = Date.now();
+    this.finishedAt = null;
+    this.escaped = false;
+    this.outOfTime = false;
+  }
+
+  Run.prototype.current = function () { return this.rooms[this.index]; };
+  Run.prototype.isLastRoom = function () { return this.index === this.rooms.length - 1; };
+
+  Run.prototype.msLeft = function () {
+    return Math.max(0, CFG.totalSeconds * 1000 - (Date.now() - this.startedAt));
+  };
+
+  /* Called once per room.
+       correct     did they get it right
+       elapsedMs   time spent in this room
+       perfect     right first time with nothing wrong selected
+       usedHint    did they open the hint                                    */
+  Run.prototype.settle = function (correct, elapsedMs, perfect, usedHint) {
+    var pts = 0, speed = 0, perfectBonus = 0, hintBonus = 0;
+
+    if (correct) {
+      pts = CFG.points.base;
+      var target = CFG.points.speedTargetSeconds * 1000;
+      speed = Math.round(CFG.points.speed * Math.max(0, 1 - elapsedMs / target));
+      if (perfect) perfectBonus = CFG.points.perfectRoom;
+      if (!usedHint) hintBonus = CFG.points.noHint;
+      pts += speed + perfectBonus + hintBonus;
+      this.fragments++;
+    } else {
+      this.lives--;
+    }
+
+    var outcome = {
+      roomId: this.current().def.id,
+      scenarioId: this.current().scenario.id,
+      correct: correct,
+      perfect: !!perfect,
+      usedHint: !!usedHint,
+      elapsedMs: elapsedMs,
+      points: pts,
+      speedBonus: speed,
+      perfectBonus: perfectBonus,
+      hintBonus: hintBonus
+    };
+    this.results.push(outcome);
+    return outcome;
+  };
+
+  Run.prototype.score = function () {
+    return this.results.reduce(function (s, r) { return s + r.points; }, 0);
+  };
+
+  Run.prototype.isDead = function () { return this.lives <= 0; };
+
+  Run.prototype.finish = function (escaped, outOfTime) {
+    this.finishedAt = Date.now();
+    this.escaped = !!escaped;
+    this.outOfTime = !!outOfTime;
+  };
+
+  /* Recomputed from the recorded room outcomes rather than any running total,
+     so an edited page value can't produce a better result. */
+  Run.prototype.result = function () {
+    if (!this.finishedAt) this.finish(false, false);
+
+    var total = this.rooms.length;
+    var correct = 0, points = 0, elapsed = 0;
+
+    this.results.forEach(function (r) {
+      if (r.correct) correct++;
+      points += r.points;
+      elapsed += r.elapsedMs;
+    });
+
+    var attempted = this.results.length;
+
+    return {
+      gameId: this.id,
+      game: "identity-lockdown",
+      name: this.player.name,
+      wopid: this.player.wopid || "",
+      score: points,
+      correct: correct,
+      incorrect: attempted - correct,
+      total: total,
+      accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
+      lives: Math.max(0, this.lives),
+      maxLives: CFG.lives,
+      escaped: this.escaped,
+      durationMs: this.finishedAt - this.startedAt,
+      avgResponseMs: attempted ? Math.round(elapsed / attempted) : 0,
+      startedAt: new Date(this.startedAt).toISOString(),
+      completedAt: new Date(this.finishedAt).toISOString(),
+      responses: this.results.map(function (r) {
+        return { r: r.roomId, s: r.scenarioId, ok: r.correct, ms: r.elapsedMs, p: r.points };
+      })
+    };
+  };
+
+  var RANKS = [
+    { min: 5, title: "Identity Guardian", msg: "Five rooms, five keys, nothing got past you." },
+    { min: 4, title: "Human Firewall",    msg: "One slip, but you got out with your account intact." },
+    { min: 3, title: "Sharp Eye",         msg: "You escaped. A couple of those were genuinely nasty." },
+    { min: 0, title: "Out by a Whisker",  msg: "You made it — just. Worth another run." }
+  ];
+
+  function rankFor(result) {
+    if (!result.escaped) {
+      return result.lives <= 0
+        ? { title: "Identity Compromised", msg: "The attacker got in before you secured your account." }
+        : { title: "Out of Time",          msg: "The clock beat you. The attacker was still working." };
+    }
+    for (var i = 0; i < RANKS.length; i++) if (result.correct >= RANKS[i].min) return RANKS[i];
+    return RANKS[RANKS.length - 1];
+  }
+
+  function clock(ms) {
+    var s = Math.ceil(ms / 1000);
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+
+  global.IL_ENGINE = { Run: Run, rankFor: rankFor, clock: clock };
+})(window);
