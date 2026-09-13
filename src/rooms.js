@@ -13,9 +13,17 @@
    Digital Identity content follows the Woodside "Digital Identity — Leader
    Overview" deck: privacy and consent, photo capture, review with manager
    confirmation where automatic verification cannot complete, then choosing
-   your Microsoft 365 photo. The fallback for people without a Digital
-   Identity is a three-way verification call with the person, their leader
-   and the Digital Service Desk.
+   your Microsoft 365 photo. Participation is voluntary. The fallback for
+   people without a Digital Identity is a three-way verification call with
+   the person, their leader and the Digital Service Desk.
+
+   Every room answers one question: how do you prove it's really you, and
+   how does an attacker exploit it when you can't?
+     room1  proving it's you when your usual proof is gone
+     room2  impostors posing as the people who verify you
+     room3  how the real Digital Identity process works
+     room4  a phish that imitates that process
+     room5  impersonation of someone else — what Digital Identity defends
    ========================================================================== */
 window.IL_ROOMS = [
 
@@ -23,7 +31,7 @@ window.IL_ROOMS = [
 {
   id: "room1",
   title: "Lost Phone",
-  subtitle: "Get back in without making it worse",
+  subtitle: "No phone, no MFA — so how do you prove it's you?",
   type: "choice",
   task: "Tap the safest thing to do.",
   scenarios: [
@@ -62,6 +70,30 @@ window.IL_ROOMS = [
       ],
       why: "Without a Digital Identity there's a fallback check involving your leader — it works, it's just slower for everyone.",
       hint: "Who else would already know it's really you?"
+    },
+    {
+      id: "r1-consent",
+      brief: "The Service Desk offers to set you up with a Digital Identity so this check is faster next time. The first screen is privacy information and a consent button.",
+      options: [
+        { t: "Read the privacy information, then consent if you're comfortable — it's your choice", correct: true },
+        { t: "Skip straight past it and take the photo; you can read the detail later" },
+        { t: "Refuse outright — any process that wants your photo must be a scam" },
+        { t: "Ask a colleague to complete it for you so you can get back to work" }
+      ],
+      why: "Privacy and consent come first by design — you see what the photo is used for before you take it, and taking part is voluntary.",
+      hint: "The screen in front of you is there for a reason. Two of these skip it."
+    },
+    {
+      id: "r1-notmfa",
+      brief: "Waiting on the callback, a colleague tells you that once you have a Digital Identity you won't need to bother with MFA prompts any more.",
+      options: [
+        { t: "Correct them — Digital Identity supports identity checks, it never replaces MFA", correct: true },
+        { t: "Agree — that's the whole point of verifying your photo" },
+        { t: "Agree, but keep using MFA yourself to be safe" },
+        { t: "Tell them to raise it with the Service Desk and leave it there" }
+      ],
+      why: "A Digital Identity is trusted proof for support and recovery. MFA still guards every sign-in — the two do different jobs.",
+      hint: "One proves who you are to a human. The other guards the door."
     }
   ]
 },
@@ -70,7 +102,7 @@ window.IL_ROOMS = [
 {
   id: "room2",
   title: "Who Can You Trust?",
-  subtitle: "Three messages. Some are not what they claim",
+  subtitle: "Three messages, all claiming to verify you",
   type: "multiselect",
   task: "Tap every message you should NOT act on, then confirm.",
   scenarios: [
@@ -148,6 +180,31 @@ window.IL_ROOMS = [
         }
       ],
       hint: "Urgent is not the same as fake. Judge each one on what it wants from you."
+    },
+    {
+      id: "r2-set-di",
+      brief: "Three messages arrive, all of them about your Digital Identity.",
+      messages: [
+        {
+          from: "Identity Verification", initials: "IV", colour: "#B45309",
+          text: "To complete your Digital Identity, upload a scan of your passport or driver's licence at woodside-identity-verify[.]com today.",
+          suspicious: true,
+          why: "The real process captures a photo with your own device camera. It never asks you to send identity documents to a website."
+        },
+        {
+          from: "Digital Service Desk", initials: "DS", colour: "#0F9D7A",
+          text: "You're invited to create a Digital Identity. It's voluntary, takes about two minutes, and you start it from the link on the intranet home page \u2014 have a read of the privacy information first.",
+          suspicious: false,
+          why: "Voluntary, no link of its own, and it points you at privacy information rather than rushing you."
+        },
+        {
+          from: "Digital Identity Team", initials: "DI", colour: "#B45309",
+          text: "Your identity photo failed verification. Reply with a new photo and your network password so we can re-link it to your account.",
+          suspicious: true,
+          why: "When a photo can't be verified automatically it goes to your manager to confirm \u2014 and nothing in the process ever needs your password."
+        }
+      ],
+      hint: "You've seen how the real process works. Two of these don't match it."
     }
   ]
 },
@@ -156,7 +213,7 @@ window.IL_ROOMS = [
 {
   id: "room3",
   title: "Prove Your Identity",
-  subtitle: "How a Digital Identity is actually created",
+  subtitle: "How a Digital Identity works — and what happens without one",
   type: "order",
   task: "Tap the steps in the right order.",
   scenarios: [
@@ -184,6 +241,19 @@ window.IL_ROOMS = [
       ],
       why: "When automatic verification can't complete, manager confirmation takes its place — the check still happens, just by a human.",
       hint: "A person only gets involved once the automatic check has failed."
+    },
+    {
+      id: "r3-fallback",
+      brief: "You don't have a Digital Identity, so the Service Desk has to verify you the long way. Put that fallback in order.",
+      steps: [
+        "You contact the Service Desk about your lockout",
+        "They can't confirm your identity digitally",
+        "A verification call is arranged with your leader",
+        "Your leader confirms on the call that it's really you",
+        "Your access is restored"
+      ],
+      why: "This is the fallback without a Digital Identity: a three-way call with you, your leader and the Service Desk. It works — it just costs three people's time instead of a two-minute check.",
+      hint: "Someone who already knows you has to be on the call."
     }
   ]
 },
@@ -192,7 +262,7 @@ window.IL_ROOMS = [
 {
   id: "room4",
   title: "Phishing Trap",
-  subtitle: "The attacker tries a different way in",
+  subtitle: "The attacker imitates the process you just learned",
   type: "hunt",
   task: "Tap every warning sign you can find.",
   scenarios: [
@@ -249,6 +319,42 @@ window.IL_ROOMS = [
         { id: "link", why: "Not a Microsoft domain, whatever it looks like." }
       ],
       hint: "Nothing here is quite what it claims to be — including the parts that look official."
+    },
+    {
+      id: "r4-enrol",
+      brief: "Now an email about your Digital Identity. You did just start one, so this is the one you're most likely to act on.",
+      chrome: null,
+      mock: `
+        <div class="body">
+          <p class="muted" style="margin-bottom:12px">
+            From: <button class="clue" data-clue="sender">digital-identity@woodside-verify[.]online</button>
+          </p>
+          <h3>Complete your Digital Identity enrolment</h3>
+          <div class="idcard" style="margin-bottom:14px">
+            <div class="idphoto blur"></div>
+            <div class="idmeta">
+              <b>Enrolment incomplete</b>
+              <button class="clue" data-clue="mandatory">Enrolment is mandatory. Accounts not verified by Friday will be suspended.</button>
+              <span class="pill fail">Action required</span>
+            </div>
+          </div>
+          <p><button class="clue" data-clue="docs">Attach a scan of your passport or driver&#8217;s licence so we can confirm your photo.</button></p>
+          <p><button class="clue" data-clue="password">Include your network password so the photo can be linked to your account.</button></p>
+          <!-- decoy: true statement, tapping it costs the perfect-room bonus -->
+          <p><button class="clue" data-clue="privacy">Your photo is used to confirm your identity and appears across Microsoft 365.</button></p>
+          <p class="muted" style="margin-bottom:0">
+            Finish enrolment:
+            <button class="clue" data-clue="link">hxxps://woodside-digitalid[.]co/enrol</button>
+          </p>
+        </div>`,
+      clues: [
+        { id: "sender", why: "Not a Woodside domain, however familiar the words look." },
+        { id: "mandatory", why: "Digital Identity is voluntary. Nobody loses their account over it." },
+        { id: "docs", why: "The real process takes a photo on your own device. It never collects identity documents." },
+        { id: "password", why: "Nothing in the process ever needs your password." },
+        { id: "link", why: "The genuine enrolment starts from the intranet, not a link in an email." }
+      ],
+      hint: "One line in here is actually true. The rest contradict how enrolment really works."
     }
   ]
 },
@@ -257,7 +363,7 @@ window.IL_ROOMS = [
 {
   id: "room5",
   title: "The Imposter",
-  subtitle: "One last door, and someone's already behind it",
+  subtitle: "Someone is claiming to be a person you trust",
   type: "choice",
   task: "Tap the safest thing to do.",
   scenarios: [
@@ -280,7 +386,7 @@ window.IL_ROOMS = [
         { t: "Ask them something personal on the call to check it's really them" },
         { t: "Approve it, then report it afterwards just in case" }
       ],
-      why: "Faces and voices can be convincingly faked, so verify on a channel the caller doesn't control.",
+      why: "Faces and voices can be convincingly faked, so verify on a channel the caller doesn't control. This is exactly the gap a Digital Identity closes — trusted proof instead of ‘I recognise them’.",
       hint: "Everything you can see and hear is coming down the attacker's own channel."
     },
     {
@@ -302,7 +408,7 @@ window.IL_ROOMS = [
         { t: "Read out the code, but ask for their employee number first" },
         { t: "Ask them to call back later when you can check" }
       ],
-      why: "Knowing things about you isn't proof of identity, and no genuine agent needs a code from your screen.",
+      why: "Knowing things about you isn't proof of identity, and no genuine agent needs a code from your screen. Verified identity runs one way — you prove who you are to the Service Desk, never the other way round.",
       hint: "They called you. That's the part you can't verify."
     },
     {
@@ -324,7 +430,7 @@ window.IL_ROOMS = [
         { t: "Reply and ask them to prove who they are" },
         { t: "Approve it and tell them afterwards" }
       ],
-      why: "A display name and photo are trivially copied, and replying only reaches whoever set the account up.",
+      why: "A display name and photo are trivially copied, and replying only reaches whoever set the account up. A name and a picture are not an identity.",
       hint: "Look at the label under the message before you look at the name."
     },
     {

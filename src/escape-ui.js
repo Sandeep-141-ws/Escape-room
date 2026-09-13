@@ -141,8 +141,8 @@
       '<p class="eyebrow">Mission briefing</p>' +
       '<div class="story">Your phone is missing, your MFA is unavailable, and ' +
         "<b>someone is already trying to get into your account</b>.</div>" +
-      '<p class="lede">You have four minutes to recover your identity, shut the attacker out, ' +
-        "and unlock your account.</p>" +
+      '<p class="lede">Every door ahead asks the same question: <b>can you prove it&#8217;s really you</b> &#8212; ' +
+        "and can you tell when someone else is faking it? You have four minutes.</p>" +
 
       '<div class="mission">' +
         "<div><b>5 rooms</b>Each one you clear gives you a key fragment.</div>" +
@@ -558,12 +558,14 @@
 
       '<h3 class="sub">What gets you out every time</h3>' +
       '<ul class="takeaways">' +
-        '<li><span class="num">1</span><div><b>Never approve a prompt you didn&#8217;t start,</b> ' +
+        '<li><span class="num">1</span><div><b>A Digital Identity is trusted proof it&#8217;s really you.</b> ' +
+          "It&#8217;s voluntary, takes about two minutes, and it turns a three-way verification call into a quick check.</div></li>" +
+        '<li><span class="num">2</span><div><b>The real process never asks for documents, codes or passwords.</b> ' +
+          "Consent first, a photo from your own device, then review. Anything else claiming to be it is a phish.</div></li>" +
+        '<li><span class="num">3</span><div><b>Never approve a prompt you didn&#8217;t start,</b> ' +
           "and never read out a code. That&#8217;s the attacker&#8217;s whole plan.</div></li>" +
-        '<li><span class="num">2</span><div><b>Verify on a channel they don&#8217;t control.</b> ' +
-          "Call back on a number you already had.</div></li>" +
-        '<li><span class="num">3</span><div><b>A Digital Identity is trusted proof it&#8217;s really you</b> ' +
-          "&#8212; it makes recovery like this far faster.</div></li>" +
+        '<li><span class="num">4</span><div><b>Verify on a channel they don&#8217;t control.</b> ' +
+          "A face, a voice and a photo can all be faked. Call back on a number you already had.</div></li>" +
       "</ul>" +
 
       '<div class="foot">' +
