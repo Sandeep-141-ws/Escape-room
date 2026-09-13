@@ -9,6 +9,25 @@
   var ROOMS = global.IL_ROOMS;
   var ENGINE = global.VM_ENGINE;      // shared shuffle / uuid / formatDuration
 
+  /* Scenarios flagged `di` teach the Digital Identity process itself. Random
+     picks alone can leave a run with barely any, so swap rooms over until the
+     run hits the configured minimum. Rooms with no `di` scenario are left as
+     they are, and the choice within each room stays random. */
+  function forceIdentityRooms(rooms) {
+    var need = CFG.minIdentityRooms || 0;
+    var have = rooms.filter(function (r) { return r.scenario.di; }).length;
+
+    var swappable = ENGINE.shuffle(rooms.filter(function (r) {
+      return !r.scenario.di && r.def.scenarios.some(function (s) { return s.di; });
+    }));
+
+    for (var i = 0; i < swappable.length && have < need; i++) {
+      var pool = swappable[i].def.scenarios.filter(function (s) { return s.di; });
+      swappable[i].scenario = ENGINE.shuffle(pool)[0];
+      have++;
+    }
+  }
+
   function Run(player) {
     this.id = ENGINE.uuid();
     this.player = player;             // { name, wopid }
@@ -20,6 +39,8 @@
         scenario: ENGINE.shuffle(room.scenarios)[0]
       };
     });
+
+    forceIdentityRooms(this.rooms);
 
     this.index = 0;
     this.lives = CFG.lives;
@@ -33,7 +54,6 @@
 
   Run.prototype.current = function () { return this.rooms[this.index]; };
   Run.prototype.isLastRoom = function () { return this.index === this.rooms.length - 1; };
-
   Run.prototype.msLeft = function () {
     return Math.max(0, CFG.totalSeconds * 1000 - (Date.now() - this.startedAt));
   };

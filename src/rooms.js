@@ -61,6 +61,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r1-nodi",
+      di: true,
       brief: "You never created a Digital Identity. The Service Desk says they'll need to verify you another way before restoring access.",
       options: [
         { t: "Expect a three-way verification call with you, your leader and the Service Desk", correct: true },
@@ -73,6 +74,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r1-consent",
+      di: true,
       brief: "The Service Desk offers to set you up with a Digital Identity so this check is faster next time. The first screen is privacy information and a consent button.",
       options: [
         { t: "Read the privacy information, then consent if you're comfortable — it's your choice", correct: true },
@@ -85,6 +87,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r1-notmfa",
+      di: true,
       brief: "Waiting on the callback, a colleague tells you that once you have a Digital Identity you won't need to bother with MFA prompts any more.",
       options: [
         { t: "Correct them — Digital Identity supports identity checks, it never replaces MFA", correct: true },
@@ -183,6 +186,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r2-set-di",
+      di: true,
       brief: "Three messages arrive, all of them about your Digital Identity.",
       messages: [
         {
@@ -219,6 +223,7 @@ window.IL_ROOMS = [
   scenarios: [
     {
       id: "r3-capture",
+      di: true,
       brief: "To recover your account you need a Digital Identity. Put the setup steps in order.",
       steps: [
         "Review the privacy information and give consent",
@@ -231,6 +236,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r3-manualreview",
+      di: true,
       brief: "Your photo was submitted but couldn't be matched automatically. Put what happens next in order.",
       steps: [
         "Your photo is submitted for verification",
@@ -244,6 +250,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r3-fallback",
+      di: true,
       brief: "You don't have a Digital Identity, so the Service Desk has to verify you the long way. Put that fallback in order.",
       steps: [
         "You contact the Service Desk about your lockout",
@@ -322,6 +329,7 @@ window.IL_ROOMS = [
     },
     {
       id: "r4-enrol",
+      di: true,
       brief: "Now an email about your Digital Identity. You did just start one, so this is the one you're most likely to act on.",
       chrome: null,
       mock: `

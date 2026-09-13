@@ -25,6 +25,10 @@ window.VM_CONFIG = {
     subtitle: "Can you secure your identity before the attacker gets in?",
     totalSeconds: 240,       // overall countdown across all five rooms
     lives: 3,
+
+    /* Rooms drawn at random can miss the point of the day, so this many are
+       forced to be Digital Identity scenarios. Room 3 always is one. */
+    minIdentityRooms: 3,
     points: {
       base: 100,             // a correct decision
       speed: 40,             // maximum, scaled against speedTarget
