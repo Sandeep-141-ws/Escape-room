@@ -21,12 +21,20 @@
     });
   }
 
-  /* Escape-room runs carry lives and an escaped flag; quiz results don't. */
+  /* Escape-room runs carry lives and an escaped flag; quiz results don't.
+     Rows saved before the four-way outcome existed only have `escaped`. */
   function livesCell(r) {
     return r.lives == null ? "\u2014" : r.lives + "/" + (r.maxLives || 3);
   }
+  var OUTCOMES = {
+    escaped: "Escaped",
+    contained: "Contained",
+    compromised: "Compromised",
+    timeout: "Out of time"
+  };
   function outcomeCell(r) {
     if (r.escaped == null) return "\u2014";
+    if (r.outcome) return OUTCOMES[r.outcome] || r.outcome;
     return r.escaped ? "Escaped" : (r.lives <= 0 ? "Compromised" : "Out of time");
   }
 

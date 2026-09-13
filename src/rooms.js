@@ -282,6 +282,8 @@ window.IL_ROOMS = [
           <p class="muted" style="margin-bottom:12px">
             From: <button class="clue" data-clue="sender">IT-Support@woodside-secure[.]net</button>
           </p>
+          <!-- decoy: an ordinary timestamp is not a warning sign -->
+          <p class="muted" style="margin-bottom:12px">Sent: <button class="clue" data-clue="sent">Tuesday 9:14 AM</button></p>
           <h3>Your password expires in 15 minutes</h3>
           <p><button class="clue" data-clue="urgency">Your account will be permanently deleted if you do not act immediately.</button></p>
           <p>Scan the code below with your phone to re-validate your credentials.</p>
@@ -312,6 +314,8 @@ window.IL_ROOMS = [
             From: <button class="clue" data-clue="sender">security-alerts@microsoftt-online[.]com</button>
           </p>
           <h3>Unusual sign-in blocked</h3>
+          <!-- decoy: your own city and browser are not a warning sign -->
+          <p class="muted"><button class="clue" data-clue="location">Perth, Australia &#183; Chrome on Windows</button></p>
           <p class="muted"><button class="clue" data-clue="prompt">We have sent an approval request to your device. Approve it now to confirm this was you.</button></p>
           <p class="muted"><button class="clue" data-clue="secrecy">Do not discuss this message with colleagues while the investigation is open.</button></p>
           <p class="muted" style="margin-bottom:0">

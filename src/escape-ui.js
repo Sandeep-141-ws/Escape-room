@@ -525,6 +525,25 @@
   }
 
   /* --------------------------------------------------------------- result */
+  /* Only http(s) links are rendered, so a mistyped config value can never
+     turn into a javascript: URL on the booth laptop. */
+  function enrolCta() {
+    var c = CFG.escape && CFG.escape.enrol;
+    if (!c || !c.heading) return "";
+
+    var href = String(c.url || "").trim();
+    var safe = /^https?:\/\//i.test(href);
+
+    return '<div class="enrol">' +
+      "<b>" + esc(c.heading) + "</b>" +
+      "<p>" + esc(c.text || "") + "</p>" +
+      (safe
+        ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' +
+            esc(c.linkLabel || "Find out more") + "</a>"
+        : "") +
+    "</div>";
+  }
+
   function renderResult() {
     stopTicker();
     showHud(false);
@@ -533,11 +552,18 @@
     var rank = IL.rankFor(result);
     var won = result.escaped;
 
+    var HEAD = {
+      escaped:     { cls: "escaped",     text: "IDENTITY<br>SECURED",     sub: "You escaped." },
+      contained:   { cls: "contained",   text: "ATTACKER<br>CONTAINED",   sub: "You played every room and kept your account." },
+      compromised: { cls: "compromised", text: "IDENTITY<br>COMPROMISED", sub: "" },
+      timeout:     { cls: "compromised", text: "OUT OF<br>TIME",          sub: "" }
+    };
+    var head = HEAD[result.outcome] || HEAD.compromised;
+
     stage.innerHTML =
       '<p class="eyebrow">' + esc(CFG.orgName) + " &#183; " + esc(CFG.eventName) + "</p>" +
-      (won
-        ? '<p class="escaped">IDENTITY<br>SECURED</p><p class="lede">You escaped.</p>'
-        : '<p class="compromised">' + (result.lives <= 0 ? "IDENTITY<br>COMPROMISED" : "OUT OF<br>TIME") + "</p>") +
+      '<p class="' + head.cls + '">' + head.text + "</p>" +
+      (head.sub ? '<p class="lede">' + esc(head.sub) + "</p>" : "") +
       '<div class="rank">' + esc(rank.title) + "</div>" +
       '<p class="rankmsg">' + esc(rank.msg) + "</p>" +
 
@@ -567,6 +593,8 @@
         '<li><span class="num">4</span><div><b>Verify on a channel they don&#8217;t control.</b> ' +
           "A face, a voice and a photo can all be faked. Call back on a number you already had.</div></li>" +
       "</ul>" +
+
+      enrolCta() +
 
       '<div class="foot">' +
         '<button class="big" id="again">' + (won ? "Play again" : "Try again") + "</button>" +

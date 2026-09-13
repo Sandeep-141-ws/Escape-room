@@ -100,6 +100,15 @@
 
   Run.prototype.isDead = function () { return this.lives <= 0; };
 
+  /* Four distinct endings. "contained" is the common one: every room played,
+     lives still in hand, but a fragment short of the key. */
+  Run.prototype.outcome = function () {
+    if (this.escaped) return "escaped";
+    if (this.lives <= 0) return "compromised";
+    if (this.outOfTime) return "timeout";
+    return "contained";
+  };
+
   Run.prototype.finish = function (escaped, outOfTime) {
     this.finishedAt = Date.now();
     this.escaped = !!escaped;
@@ -135,6 +144,7 @@
       lives: Math.max(0, this.lives),
       maxLives: CFG.lives,
       escaped: this.escaped,
+      outcome: this.outcome(),
       durationMs: this.finishedAt - this.startedAt,
       avgResponseMs: attempted ? Math.round(elapsed / attempted) : 0,
       startedAt: new Date(this.startedAt).toISOString(),
@@ -145,21 +155,30 @@
     };
   };
 
-  var RANKS = [
-    { min: 5, title: "Identity Guardian", msg: "Five rooms, five keys, nothing got past you." },
-    { min: 4, title: "Human Firewall",    msg: "One slip, but you got out with your account intact." },
-    { min: 3, title: "Sharp Eye",         msg: "You escaped. A couple of those were genuinely nasty." },
-    { min: 0, title: "Out by a Whisker",  msg: "You made it — just. Worth another run." }
+  /* Graded endings for a run that was played out but fell short of the key.
+     Reached via the "contained" outcome, not by escaping. */
+  var CONTAINED = [
+    { min: 4, title: "Human Firewall",   msg: "One slip, but you shut the attacker down and kept your account." },
+    { min: 3, title: "Sharp Eye",        msg: "You held the line on most of it. A couple of those were genuinely nasty." },
+    { min: 0, title: "Out by a Whisker", msg: "The attacker got further than you'd like — but you're still standing." }
   ];
 
   function rankFor(result) {
-    if (!result.escaped) {
-      return result.lives <= 0
-        ? { title: "Identity Compromised", msg: "The attacker got in before you secured your account." }
-        : { title: "Out of Time",          msg: "The clock beat you. The attacker was still working." };
+    var outcome = result.outcome || (result.escaped ? "escaped" : result.lives <= 0 ? "compromised" : "timeout");
+
+    if (outcome === "escaped") {
+      return { title: "Identity Guardian", msg: "Five rooms, five keys, nothing got past you." };
     }
-    for (var i = 0; i < RANKS.length; i++) if (result.correct >= RANKS[i].min) return RANKS[i];
-    return RANKS[RANKS.length - 1];
+    if (outcome === "compromised") {
+      return { title: "Identity Compromised", msg: "The attacker got in before you secured your account." };
+    }
+    if (outcome === "timeout") {
+      return { title: "Out of Time", msg: "The clock beat you. The attacker was still working." };
+    }
+    for (var i = 0; i < CONTAINED.length; i++) {
+      if (result.correct >= CONTAINED[i].min) return CONTAINED[i];
+    }
+    return CONTAINED[CONTAINED.length - 1];
   }
 
   function clock(ms) {

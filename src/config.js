@@ -35,6 +35,16 @@ window.VM_CONFIG = {
       speedTargetSeconds: 48,// matches the 240s budget across five rooms
       perfectRoom: 10,       // right first time, nothing wrong selected
       noHint: 10             // cleared the room without opening the hint
+    },
+
+    /* Shown on the result screen so players leave knowing what to do next.
+       Set url to the real intranet page before the event; leave it empty and
+       the line still shows, just without a link. http/https only. */
+    enrol: {
+      heading: "Haven't created your Digital Identity yet?",
+      text:    "It's voluntary, takes about two minutes, and it turns a three-way verification call into a quick check.",
+      linkLabel: "Create it on the intranet",
+      url: ""
     }
   },
 
