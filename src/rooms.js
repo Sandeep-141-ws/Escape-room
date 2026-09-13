@@ -32,12 +32,12 @@ window.IL_ROOMS = [
       brief: "Your phone is gone. You can't approve MFA, and you're locked out of your account with a deadline this afternoon.",
       options: [
         { t: "Contact the Service Desk and verify your identity through the approved recovery process", correct: true },
-        { t: "Ask a colleague to approve the MFA prompt for you" },
-        { t: "Keep retrying the sign-in until it lets you through" },
-        { t: "Give your password to your manager so they can do it for you" }
+        { t: "Use the account recovery link in the email you've just received about the lockout" },
+        { t: "Sign in from a colleague's computer, in case the block is on your device" },
+        { t: "Ask a colleague to approve the prompt so you can still make the deadline" }
       ],
       why: "Account recovery always runs through a verified identity check — and a Digital Identity makes that check much faster.",
-      hint: "Only one option actually proves who you are."
+      hint: "Three of these get you moving. Only one proves who you are."
     },
     {
       id: "r1-borrowed",
@@ -61,7 +61,7 @@ window.IL_ROOMS = [
         { t: "Expect to be told nothing can be done until you visit an office" }
       ],
       why: "Without a Digital Identity there's a fallback check involving your leader — it works, it's just slower for everyone.",
-      hint: "Who else would know it's really you?"
+      hint: "Who else would already know it's really you?"
     }
   ]
 },
@@ -97,7 +97,7 @@ window.IL_ROOMS = [
           why: "A real manager never needs your password, and urgency is the tell."
         }
       ],
-      hint: "Two of these ask you for something no genuine contact ever needs."
+      hint: "A genuine contact never needs a code, a password, or a decision right now."
     },
     {
       id: "r2-set-b",
@@ -123,6 +123,31 @@ window.IL_ROOMS = [
         }
       ],
       hint: "Ignore who they claim to be. Look at what each one is asking you to do."
+    },
+    {
+      id: "r2-set-c",
+      brief: "Your phone buzzes three more times.",
+      messages: [
+        {
+          from: "Digital Service Desk", initials: "DS", colour: "#0F9D7A",
+          text: "We've seen sign-in attempts on your account from outside Australia and locked it as a precaution. Please call us on the number listed on the intranet \u2014 don't use a number from this message.",
+          suspicious: false,
+          why: "It's alarming and urgent, but it asks for nothing and sends you to a number it can't control."
+        },
+        {
+          from: "Microsoft Security", initials: "MS", colour: "#B45309",
+          text: "Your password appeared in a breach. Reset it now at hxxps://microsoft-account-reset[.]net before your access is suspended.",
+          suspicious: true,
+          why: "A real breach notice doesn't hand you a reset link on a domain like that."
+        },
+        {
+          from: "HR Payroll", initials: "HR", colour: "#B45309",
+          text: "We couldn't verify your bank details before Thursday's pay run. Reply with your account number and the code we've just texted you.",
+          suspicious: true,
+          why: "Money, a deadline, and a request for a code \u2014 all three at once."
+        }
+      ],
+      hint: "Urgent is not the same as fake. Judge each one on what it wants from you."
     }
   ]
 },
@@ -198,7 +223,7 @@ window.IL_ROOMS = [
         { id: "qr", why: "A QR code hides where it goes, and moves you onto your phone." },
         { id: "link", why: "The link doesn't go where it claims to." }
       ],
-      hint: "Check who sent it, how fast it wants you to move, and where it's sending you."
+      hint: "Slow down and read it the way you would if you hadn't been expecting it."
     },
     {
       id: "r4-mfa",
@@ -223,7 +248,7 @@ window.IL_ROOMS = [
         { id: "secrecy", why: "Real security teams never ask you to keep quiet." },
         { id: "link", why: "Not a Microsoft domain, whatever it looks like." }
       ],
-      hint: "Four things here are wrong: who sent it, what it asks you to approve, what it asks you to hide, and where it points."
+      hint: "Nothing here is quite what it claims to be — including the parts that look official."
     }
   ]
 },
@@ -301,6 +326,28 @@ window.IL_ROOMS = [
       ],
       why: "A display name and photo are trivially copied, and replying only reaches whoever set the account up.",
       hint: "Look at the label under the message before you look at the name."
+    },
+    {
+      id: "r5-approved",
+      brief: "You already approved one prompt tonight, assuming it was your own sign-in. It wasn't. Nothing on your account looks wrong yet.",
+      mock: `
+        <div class="body dark">
+          <div class="chatrow">
+            <div class="av" style="background:#B45309">&#9888;</div>
+            <div class="bubble">
+              Approved &#183; 11 minutes ago<br>
+              <span style="color:#98A2AE">Sign-in from a location you don't recognise. Session still active.</span>
+            </div>
+          </div>
+        </div>`,
+      options: [
+        { t: "Report it to the Service Desk now, before you know what the damage is", correct: true },
+        { t: "Wait and see whether anything actually changes on your account" },
+        { t: "Change your password quietly and say nothing about the prompt" },
+        { t: "Sign out of everything and keep an eye on it over the next few days" }
+      ],
+      why: "The attacker has a live session right now. Reporting in the first few minutes is what limits the damage \u2014 waiting until you're sure is what costs you. Nobody gets in trouble for reporting fast.",
+      hint: "Doing nothing is still a decision, and the session is still open."
     }
   ]
 }

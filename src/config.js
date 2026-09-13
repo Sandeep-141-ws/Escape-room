@@ -27,9 +27,9 @@ window.VM_CONFIG = {
     lives: 3,
     points: {
       base: 100,             // a correct decision
-      speed: 25,             // maximum, scaled against speedTarget
-      speedTargetSeconds: 35,
-      perfectRoom: 25,       // right first time, nothing wrong selected
+      speed: 40,             // maximum, scaled against speedTarget
+      speedTargetSeconds: 48,// matches the 240s budget across five rooms
+      perfectRoom: 10,       // right first time, nothing wrong selected
       noHint: 10             // cleared the room without opening the hint
     }
   },
