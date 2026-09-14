@@ -177,7 +177,8 @@
         "</div>" +
 
         '<div class="toolbar">' +
-          '<input type="search" id="h-search" placeholder="Search name or WOPID" ' +
+          '<input type="search" id="h-search" placeholder="' +
+      (CFG.collectWopid ? "Search name or WOPID" : "Search name") + '" ' +
             'value="' + esc(query) + '" aria-label="Search players">' +
           '<button class="big alt" id="h-export">Export results</button>' +
         "</div>" +
@@ -261,17 +262,22 @@
 
   /* ----------------------------------------------------------------- export */
   function exportXlsx() {
+    var wopid = CFG.collectWopid;
     var data = [[
-      "Rank", "Player Name", "WOPID", "Score", "Correct Decisions", "Incorrect Decisions",
+      "Rank", "Player Name"
+    ].concat(wopid ? ["WOPID"] : []).concat([
+      "Score", "Correct Decisions", "Incorrect Decisions",
       "Accuracy %", "Lives Remaining", "Outcome", "Completion Time",
       "Average Response Time (s)", "Started At", "Completed At"
-    ]].concat(rows.map(function (r) {
+    ])].concat(rows.map(function (r) {
       return [
-        r.rank, r.name, r.wopid || "", r.score, r.correct, r.incorrect, r.accuracy,
+        r.rank, r.name
+      ].concat(wopid ? [r.wopid || ""] : []).concat([
+        r.score, r.correct, r.incorrect, r.accuracy,
         r.lives == null ? "" : r.lives, outcomeCell(r),
         ENGINE.formatDuration(r.durationMs), Number((r.avgResponseMs / 1000).toFixed(1)),
         new Date(r.startedAt).toLocaleString(), new Date(r.completedAt).toLocaleString()
-      ];
+      ]);
     }));
 
     var date = new Date().toISOString().slice(0, 10);

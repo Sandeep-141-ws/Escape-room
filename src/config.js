@@ -57,7 +57,7 @@ window.VM_CONFIG = {
   },
 
   /* -------------------------------------------------------------- players */
-  collectWopid: true,       // false removes the field entirely
+  collectWopid: false,      // false removes the field entirely
   wopidRequired: false,     // optional by default (see README > Privacy)
 
   privacyNotice:
