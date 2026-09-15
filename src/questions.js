@@ -11,9 +11,9 @@
    why        ONE sentence shown after answering
    lock       true keeps choice order fixed (use when options are sequential)
 
-   Digital Identity answers follow the Woodside "Digital Identity - Leader
-   Overview" deck: privacy & consent, photo capture, review (manager
-   confirmation where needed), choose your Microsoft 365 photo.
+   Digital Identity answers follow the published enrolment guidance: privacy
+   & consent, photo capture, review (manager confirmation where needed),
+   choose your Microsoft 365 photo.
    ========================================================================== */
 window.VM_QUESTIONS = [
 

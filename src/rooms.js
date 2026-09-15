@@ -10,12 +10,12 @@
      order        tap the steps into the correct sequence
      hunt         tap every warning sign in a simulated message
 
-   Digital Identity content follows the Woodside "Digital Identity — Leader
-   Overview" deck: privacy and consent, photo capture, review with manager
-   confirmation where automatic verification cannot complete, then choosing
-   your Microsoft 365 photo. Participation is voluntary. The fallback for
-   people without a Digital Identity is a three-way verification call with
-   the person, their leader and the Digital Service Desk.
+   Digital Identity content follows the published enrolment guidance: privacy
+   and consent, photo capture, review with manager confirmation where
+   automatic verification cannot complete, then choosing your Microsoft 365
+   photo. Participation is voluntary. The fallback for people without a
+   Digital Identity is a three-way verification call with the person, their
+   leader and the Digital Service Desk.
 
    Every room answers one question: how do you prove it's really you, and
    how does an attacker exploit it when you can't?

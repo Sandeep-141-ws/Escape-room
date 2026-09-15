@@ -580,7 +580,7 @@
           }).join("") + "</div><span>Lives left</span></div>" +
       "</div>" +
 
-      '<div class="savenote" id="savenote">Saving your result&#8230;</div>' +
+      '<div class="savenote" id="savenote">&#8230;</div>' +
 
       '<h3 class="sub">What gets you out every time</h3>' +
       '<ul class="takeaways">' +
@@ -605,13 +605,14 @@
 
     var note = document.getElementById("savenote");
     STORE.submit(result).then(function (r) {
-      if (r.duplicate) { note.textContent = "Result already recorded."; return; }      if (r.ok) {
+      if (r.duplicate) { note.textContent = "Show this screen to the booth team to be entered for a prize."; return; }
+      if (r.ok) {
         note.textContent = won
-          ? "Result recorded \u2713 Great score \u2014 you\u2019re in the running for a prize!"
-          : "Result recorded \u2713";
+          ? "Great score! Show this screen to the booth team to be entered for a prize."
+          : "Show this screen to the booth team to be entered for a prize.";
       } else {
         note.className = "savenote bad";
-        note.textContent = "Couldn\u2019t save your result. Show this screen to the booth team.";
+        note.textContent = "Show this screen to the booth team to be entered for a prize.";
       }
     });
 
