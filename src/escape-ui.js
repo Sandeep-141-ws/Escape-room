@@ -580,7 +580,11 @@
           }).join("") + "</div><span>Lives left</span></div>" +
       "</div>" +
 
-      '<div class="savenote" id="savenote">&#8230;</div>' +
+      '<div class="nextstep">' +
+        '<span class="stepnum">Last step</span>' +
+        '<div><b>Show this screen to the booth team</b>' +
+        "<p>They&#8217;ll take down your score before you close the page.</p></div>" +
+      "</div>" +
 
       '<h3 class="sub">What gets you out every time</h3>' +
       '<ul class="takeaways">' +
@@ -603,18 +607,7 @@
 
     toTop();
 
-    var note = document.getElementById("savenote");
-    STORE.submit(result).then(function (r) {
-      if (r.duplicate) { note.textContent = "Show this screen to the booth team to be entered for a prize."; return; }
-      if (r.ok) {
-        note.textContent = won
-          ? "Great score! Show this screen to the booth team to be entered for a prize."
-          : "Show this screen to the booth team to be entered for a prize.";
-      } else {
-        note.className = "savenote bad";
-        note.textContent = "Show this screen to the booth team to be entered for a prize.";
-      }
-    });
+    STORE.submit(result);
 
     var player = run.player;
     document.getElementById("again").onclick = function () {
