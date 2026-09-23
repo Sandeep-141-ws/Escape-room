@@ -290,6 +290,16 @@ body.playing{padding-top:118px}
 .nextstep p{margin:0;font-size:14.5px;line-height:1.6;color:var(--dim)}
 
 /* --------------------------------------------------------------- results */
+/* Name sits directly above the score so one photo captures both. */
+.playerplate{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:22px 0 0;
+  font-size:clamp(21px,5.4vw,28px);font-weight:800;letter-spacing:-.02em;line-height:1.2;
+  overflow-wrap:anywhere
+}
+.playerplate span{
+  padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);
+  color:var(--dim);font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase
+}
 .livesleft{display:flex;gap:6px;align-items:center;margin-bottom:3px;min-height:27px}
 .livesleft .life{width:18px;height:18px}
 

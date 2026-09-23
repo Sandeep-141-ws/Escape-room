@@ -567,7 +567,8 @@
       '<div class="rank">' + esc(rank.title) + "</div>" +
       '<p class="rankmsg">' + esc(rank.msg) + "</p>" +
 
-      '<div class="scorewrap" style="margin-top:20px"><p class="score">' +
+      '<p class="playerplate"><span>Player</span>' + esc(result.name) + "</p>" +
+      '<div class="scorewrap" style="margin-top:6px"><p class="score">' +
         result.score + "<small> pts</small></p></div>" +
 
       '<div class="statrow">' +
@@ -583,7 +584,8 @@
       '<div class="nextstep">' +
         '<span class="stepnum">Last step</span>' +
         '<div><b>Show this screen to the booth team</b>' +
-        "<p>They&#8217;ll take down your score before you close the page.</p></div>" +
+        "<p>Your name and score are at the top of this screen. They&#8217;ll take them " +
+        "down, or snap a photo, before you close the page.</p></div>" +
       "</div>" +
 
       '<h3 class="sub">What gets you out every time</h3>' +
