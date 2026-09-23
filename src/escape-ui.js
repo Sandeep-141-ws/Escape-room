@@ -87,7 +87,7 @@
       '<p class="eyebrow">' + esc(CFG.orgName) + " &#183; " + esc(CFG.eventName) + "</p>" +
       "<h1>Identity <em>Lockdown</em></h1>" +
       '<p class="lede">' + esc(ESC_CFG.subtitle) + "</p>" +
-      '<p class="lede"><b>Five rooms. Three lives. Four minutes.</b></p>' +
+      '<p class="lede"><b>Five rooms. Three lives. Three minutes.</b></p>' +
 
       '<div class="field">' +
         '<label for="p-name">Your name</label>' +
@@ -142,12 +142,12 @@
       '<div class="story">Your phone is missing, your MFA is unavailable, and ' +
         "<b>someone is already trying to get into your account</b>.</div>" +
       '<p class="lede">Every door ahead asks the same question: <b>can you prove it&#8217;s really you</b> &#8212; ' +
-        "and can you tell when someone else is faking it? You have four minutes.</p>" +
+        "and can you tell when someone else is faking it? You have three minutes.</p>" +
 
       '<div class="mission">' +
         "<div><b>5 rooms</b>Each one you clear gives you a key fragment.</div>" +
         "<div><b>3 lives</b>A dangerous decision costs one. Lose all three and the attacker wins.</div>" +
-        "<div><b>4 minutes</b>One clock for the whole run. It doesn't stop.</div>" +
+        "<div><b>3 minutes</b>One clock for the whole run. It doesn't stop.</div>" +
       "</div>" +
 
       roomMap(-1) +
